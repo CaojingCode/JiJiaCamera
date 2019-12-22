@@ -28,7 +28,6 @@ import com.otaliastudios.cameraview.gesture.GestureAction
 import kotlinx.android.synthetic.main.camera_layot.*
 import java.io.File
 import java.io.IOException
-import java.text.SimpleDateFormat
 import java.util.*
 
 /**
@@ -39,16 +38,15 @@ import java.util.*
  */
 class JiJiaCameraActivity : AppCompatActivity() {
 
-    private var fragments = mutableListOf<Fragment>()
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.camera_layot)
+        initView()
     }
 
 
-    fun initView() {
+    private fun initView() {
         cameraKitView.setLifecycleOwner(this)
         cameraKitView.mode = Mode.VIDEO
 //        cameraKitView.audioBitRate
@@ -98,7 +96,7 @@ class JiJiaCameraActivity : AppCompatActivity() {
 
             //摄像头旋转要执行的操作，逆时针
             override fun onOrientationChanged(orientation: Int) {
-                showToast(orientation.toString())
+                showToast("摄像头旋转了$orientation 度")
             }
 
             //自动对焦开始
