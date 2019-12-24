@@ -1,5 +1,6 @@
 package com.caojing.cameralibrary.activity
 
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.PointF
 import android.media.ExifInterface
@@ -7,17 +8,15 @@ import android.media.MediaMetadataRetriever
 import android.os.Bundle
 import android.os.Environment
 import android.util.Log
-import android.view.View
 import android.view.animation.Animation
 import android.view.animation.AnimationSet
 import android.view.animation.ScaleAnimation
 import android.view.animation.TranslateAnimation
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
+import com.blankj.utilcode.util.ImageUtils
+import com.blankj.utilcode.util.ToastUtils
 import com.caojing.cameralibrary.R
-import com.caojing.cameralibrary.util.createOrExistsDir
-import com.caojing.cameralibrary.util.getNowString
-import com.caojing.cameralibrary.util.showToast
+import com.caojing.cameralibrary.util.*
 import com.caojing.cameralibrary.view.RecordButtonCallBack
 import com.otaliastudios.cameraview.CameraListener
 import com.otaliastudios.cameraview.VideoResult
@@ -26,6 +25,7 @@ import com.otaliastudios.cameraview.controls.Mode
 import com.otaliastudios.cameraview.gesture.Gesture
 import com.otaliastudios.cameraview.gesture.GestureAction
 import kotlinx.android.synthetic.main.camera_layot.*
+import kotlinx.coroutines.*
 import java.io.File
 import java.io.IOException
 import java.util.*
@@ -36,13 +36,18 @@ import java.util.*
  * 2019/12/211731
  * 不为往事扰，余生自愿笑
  */
-class JiJiaCameraActivity : AppCompatActivity() {
+@ExperimentalCoroutinesApi
+class JiJiaCameraActivity : AppCompatActivity(),CoroutineScope by MainScope(){
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.camera_layot)
         initView()
+        launch(Dispatchers.Main) {
+            val file= getLastVideo()
+            ivVideo.loadVideoImage(file.videoPath)
+        }
     }
 
 
@@ -60,7 +65,7 @@ class JiJiaCameraActivity : AppCompatActivity() {
             override fun onVideoTaken(result: VideoResult) {
                 //视频结果
                 setExif(result.file.path)
-                var bitmap = getImage(result.file.path)
+                var bitmap = getVideoImage(result.file.path)
 
                 ivBg.setImageBitmap(bitmap)
                 val scaleIaAimation = ScaleAnimation(
@@ -125,17 +130,12 @@ class JiJiaCameraActivity : AppCompatActivity() {
 
         }
 
+        ivVideo.setOnClickListener {
+            startActivity(Intent(this,VideosActivity::class.java))
+        }
     }
 
-    /**
-     * 獲取視頻圖片
-     */
-    fun getImage(mPath: String): Bitmap {
-        var media = MediaMetadataRetriever()
-        media.setDataSource(mPath)
-        //frameTime的单位为us微秒
-        return media.getFrameAtTime(1, MediaMetadataRetriever.OPTION_CLOSEST);
-    }
+
 
     /**
      * 创建文件路径
@@ -180,4 +180,8 @@ class JiJiaCameraActivity : AppCompatActivity() {
 
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        cancel()//取消协程
+    }
 }
