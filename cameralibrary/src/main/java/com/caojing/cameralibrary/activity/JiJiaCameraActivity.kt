@@ -1,10 +1,8 @@
 package com.caojing.cameralibrary.activity
 
 import android.content.Intent
-import android.graphics.Bitmap
 import android.graphics.PointF
 import android.media.ExifInterface
-import android.media.MediaMetadataRetriever
 import android.os.Bundle
 import android.os.Environment
 import android.util.Log
@@ -13,8 +11,6 @@ import android.view.animation.AnimationSet
 import android.view.animation.ScaleAnimation
 import android.view.animation.TranslateAnimation
 import androidx.appcompat.app.AppCompatActivity
-import com.blankj.utilcode.util.ImageUtils
-import com.blankj.utilcode.util.ToastUtils
 import com.caojing.cameralibrary.R
 import com.caojing.cameralibrary.util.*
 import com.caojing.cameralibrary.view.RecordButtonCallBack
