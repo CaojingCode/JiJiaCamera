@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.widget.Toast
 import com.caojing.cameralibrary.activity.JiJiaCameraActivity
 import com.caojing.cameralibrary.callback.LoctionCallBack
+import com.caojing.cameralibrary.util.VideoAddressAction
 import com.caojing.cameralibrary.util.selectLookVideo
 import com.caojing.cameralibrary.util.showToast
 import com.caojing.cameralibrary.util.startRecordVideo
@@ -20,6 +21,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         this.startRecordVideo()
 //        this.selectLookVideo()
+
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
