@@ -21,9 +21,9 @@ public class DividerDecoration extends RecyclerView.ItemDecoration {
         outRect.left = space;
         outRect.bottom = space;
         //由于每行都只有4个，所以第一个都是4的倍数，把左边距设为0
-        if (parent.getChildLayoutPosition(view) %4==0) {
-            outRect.left = 0;
-        }
+//        if (parent.getChildLayoutPosition(view) %4==0) {
+//            outRect.left = 0;
+//        }
 
     }
 }

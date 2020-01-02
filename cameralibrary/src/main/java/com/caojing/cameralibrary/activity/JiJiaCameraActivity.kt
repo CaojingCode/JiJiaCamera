@@ -1,7 +1,11 @@
 package com.caojing.cameralibrary.activity
 
+import android.content.BroadcastReceiver
+import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.graphics.PointF
+import android.location.LocationManager
 import android.media.ExifInterface
 import android.os.Bundle
 import android.os.Environment
@@ -11,7 +15,9 @@ import android.view.animation.AnimationSet
 import android.view.animation.ScaleAnimation
 import android.view.animation.TranslateAnimation
 import androidx.appcompat.app.AppCompatActivity
+import com.blankj.utilcode.util.*
 import com.caojing.cameralibrary.R
+import com.caojing.cameralibrary.bean.VideoBean
 import com.caojing.cameralibrary.util.*
 import com.caojing.cameralibrary.view.RecordButtonCallBack
 import com.otaliastudios.cameraview.CameraListener
@@ -26,6 +32,7 @@ import java.io.File
 import java.io.IOException
 import java.util.*
 
+
 /**
  *
  * Created by Caojing
@@ -33,19 +40,36 @@ import java.util.*
  * 不为往事扰，余生自愿笑
  */
 @ExperimentalCoroutinesApi
-class JiJiaCameraActivity : AppCompatActivity(),CoroutineScope by MainScope(){
+class JiJiaCameraActivity : AppCompatActivity(), CoroutineScope by MainScope() {
 
+    var videoAddress: String? = null
+
+    private var broadcastReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            if (intent?.action == VideoAddressAction) {
+                //接收视频拍摄地址，
+                videoAddress = intent.getStringExtra(VideoAddress)
+            }
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.camera_layot)
         initView()
+        var intentFilter = IntentFilter()
+        intentFilter.addAction(VideoAddressAction)
+        registerReceiver(broadcastReceiver, intentFilter)
+
         launch(Dispatchers.Main) {
-            val file= getLastVideo()
-            ivVideo.loadVideoImage(file.videoPath)
+            val files = getVideoFiles()
+            if (files.size > 1) {
+                val file = files[1]
+                ivVideo.loadVideoImage(file.videoPath)
+                ToastUtils.showShort(file.videoPath)
+            }
         }
     }
-
 
     private fun initView() {
         cameraKitView.setLifecycleOwner(this)
@@ -55,16 +79,30 @@ class JiJiaCameraActivity : AppCompatActivity(),CoroutineScope by MainScope(){
         cameraKitView.flash = Flash.AUTO //闪光灯自动开启
         cameraKitView.mapGesture(Gesture.PINCH, GestureAction.ZOOM) //手势缩放
         cameraKitView.mapGesture(Gesture.TAP, GestureAction.AUTO_FOCUS) // 点击获取焦点
-//        cameraKitView.setLocation() //视频拍摄位置记录
+
         cameraKitView.addCameraListener(object : CameraListener() {
 
             override fun onVideoTaken(result: VideoResult) {
-                //视频结果
-                setExif(result.file.path)
-                var bitmap = getVideoImage(result.file.path)
+                //获取视频文件信息，从信息文件中取到所有视频的信息json字符串
+                val videoInfoList = getVideoInfoList()
 
+                //将本次拍摄的视频相关信息添加到信息文件转换的集合中
+                val videoBean = VideoBean()
+                videoBean.videoAddress = videoAddress.toString()
+                videoBean.videoTimestamp = TimeUtils.getNowMills()
+                videoBean.videoPath = result.file.path
+                videoBean.videoDuration = getVideoDuration(result.file.path)
+                videoBean.deviceType=DeviceUtils.getModel()
+                videoInfoList.add(videoBean)
+                //将所有的视频信息集合转换成json字符串
+                val videoJson = GsonUtils.toJson(videoInfoList)
+                //将json 字符串写到文件中并保存
+                FileIOUtils.writeFileFromString(getTempStringPath(), videoJson)
+
+                //根据文件路径转换成bitmap
+                val bitmap = getVideoImage(result.file.path)
                 ivBg.setImageBitmap(bitmap)
-                val scaleIaAimation = ScaleAnimation(
+                val scaleIaAnimation = ScaleAnimation(
                     1f, (ivVideo.width.toFloat() / ivBg.width.toFloat()),
                     1f, ivVideo.height.toFloat() / ivBg.height.toFloat()
                 )
@@ -74,10 +112,10 @@ class JiJiaCameraActivity : AppCompatActivity(),CoroutineScope by MainScope(){
                     Animation.ABSOLUTE, ivVideo.x,
                     Animation.ABSOLUTE, 0f, Animation.ABSOLUTE, ivVideo.y
                 )
-                var animSet = AnimationSet(false)
+                val animSet = AnimationSet(false)
                 animSet.fillAfter = true
                 animSet.duration = 300
-                animSet.addAnimation(scaleIaAimation)
+                animSet.addAnimation(scaleIaAnimation)
                 animSet.addAnimation(animation)
                 ivBg.startAnimation(animSet)
                 animSet.setAnimationListener(object : Animation.AnimationListener {
@@ -89,6 +127,7 @@ class JiJiaCameraActivity : AppCompatActivity(),CoroutineScope by MainScope(){
                     }
 
                     override fun onAnimationStart(animation: Animation?) {
+
                     }
 
                 })
@@ -116,7 +155,7 @@ class JiJiaCameraActivity : AppCompatActivity(),CoroutineScope by MainScope(){
                 if (cameraKitView.isTakingVideo) {
                     return
                 }
-                var path = getTempFilePath()
+                val path = getTempFilePath()
                 cameraKitView.takeVideo(File(path))
             }
 
@@ -127,57 +166,16 @@ class JiJiaCameraActivity : AppCompatActivity(),CoroutineScope by MainScope(){
         }
 
         ivVideo.setOnClickListener {
-            startActivity(Intent(this,VideosActivity::class.java))
+            startActivity(Intent(this, VideosActivity::class.java))
         }
     }
 
 
 
-    /**
-     * 创建文件路径
-     */
-    private fun getTempFilePath(): String {
-        val fileDir = String.format(
-            Locale.getDefault(),
-            "%s/JiJiaRecord/",
-            Environment.getExternalStorageDirectory().absolutePath
-        )
-        if (!fileDir.createOrExistsDir()) {
-            Log.e("文件夹创建失败：%s", fileDir)
-        }
-        val fileName = String.format(
-            Locale.getDefault(), "record_%s","yyyyMMddHHmmss".getNowString()
-        )
-        return String.format(Locale.getDefault(), "%s%s.mp4", fileDir, fileName)
-    }
-
-    /**
-     * 设置exif信息
-     */
-    fun setExif(filepath: String) {
-        var exif: ExifInterface? = null
-        try {
-            exif = ExifInterface(filepath)     //根据图片的路径获取图片的Exif
-        } catch (ex: IOException) {
-            Log.e("Mine", "cannot read exif", ex)
-        }
-        if (exif == null)
-            return
-        exif.setAttribute(
-            ExifInterface.TAG_DATETIME,
-            "yyyy-MM-dd HH:mm:ss".getNowString()
-        )              //把时间写进exif
-        exif.setAttribute(ExifInterface.TAG_MODEL, android.os.Build.MODEL)             //设备型号
-        try {
-            exif.saveAttributes()         //最后保存起来
-        } catch (e: IOException) {
-            Log.e("Mine", "cannot save exif", e)
-        }
-
-    }
 
     override fun onDestroy() {
         super.onDestroy()
         cancel()//取消协程
+        unregisterReceiver(broadcastReceiver)
     }
 }

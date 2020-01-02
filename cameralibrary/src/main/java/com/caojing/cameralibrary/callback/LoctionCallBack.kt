@@ -6,5 +6,8 @@ package com.caojing.cameralibrary.callback
  * 2019/12/250952
  * 不为往事扰，余生自愿笑
  */
-class LoctionCallBack {
+interface LoctionCallBack {
+
+   fun  locationInfo( address:String)
+
 }
