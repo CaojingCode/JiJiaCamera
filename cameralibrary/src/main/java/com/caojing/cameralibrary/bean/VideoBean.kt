@@ -1,5 +1,7 @@
 package com.caojing.cameralibrary.bean
 
+import java.io.Serializable
+
 /**
  *
  * Created by Caojing
@@ -17,4 +19,4 @@ data class VideoBean(
 
     var deviceType: String = ""  //设备型号
 
-)
+):Serializable

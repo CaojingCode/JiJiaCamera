@@ -11,7 +11,7 @@ android {
 
 
     defaultConfig {
-        minSdkVersion 16
+        minSdkVersion 19
         targetSdkVersion 29
         versionCode 1
         versionName "1.0"
@@ -51,4 +51,14 @@ dependencies {
     implementation "com.github.bumptech.glide:glide:4.9.0"
 
     implementation 'com.qmuiteam:qmui:1.1.0'
+
+
+    //https://github.com/CarGuo/GSYVideoPlayer
+    implementation 'com.shuyu:gsyVideoPlayer-java:7.1.2'
+
+    implementation 'com.shuyu:gsyVideoPlayer-armv5:7.1.2'
+    implementation 'com.shuyu:gsyVideoPlayer-armv7a:7.1.2'
+    implementation 'com.shuyu:gsyVideoPlayer-arm64:7.1.2'
+    implementation 'com.shuyu:gsyVideoPlayer-x64:7.1.2'
+    implementation 'com.shuyu:gsyVideoPlayer-x86:7.1.2'
 }

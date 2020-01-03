@@ -1,6 +1,8 @@
 package com.caojing.cameralibrary.activity
 
 import android.app.Activity
+import android.app.AlertDialog
+import android.content.DialogInterface
 import android.content.Intent
 import android.media.ExifInterface
 import android.os.Bundle
@@ -17,6 +19,7 @@ import com.caojing.cameralibrary.adapter.VideosAdapter
 import com.caojing.cameralibrary.bean.VideoBean
 import com.caojing.cameralibrary.util.*
 import com.chad.library.adapter.base.BaseQuickAdapter
+import com.qmuiteam.qmui.util.QMUIStatusBarHelper
 import kotlinx.android.synthetic.main.activity_videos.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -37,6 +40,7 @@ class VideosActivity : AppCompatActivity(), BaseQuickAdapter.OnItemChildClickLis
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        QMUIStatusBarHelper.translucent(this)
         setContentView(R.layout.activity_videos)
         isSelect = intent.getBooleanExtra("isSelect", false)
         if (isSelect) {
@@ -81,28 +85,40 @@ class VideosActivity : AppCompatActivity(), BaseQuickAdapter.OnItemChildClickLis
                 finish()
             } else {
                 //删除
-                //删除选中的视频，真实位置，
-                for (i in videoSelectList.indices) {
-                    val videoBean = videoSelectList[i]
-                    FileUtils.delete(videoBean.videoPath)
+                AlertDialog.Builder(this)
+                    .setMessage("是否确认删除带看视频")
+                    .setNegativeButton("取消", DialogInterface.OnClickListener { dialog, which ->
+                        dialog.dismiss()
+                    })
+                    .setPositiveButton("确定", DialogInterface.OnClickListener { dialog, which ->
 
-                }
-                //获取两个集合的差集,更新适配器
-                @Suppress("UNCHECKED_CAST")
-                val newList: MutableList<VideoBean> =
-                    CollectionUtils.subtract(
-                        videoAdapter.data,
-                        videoSelectList
-                    ) as MutableList<VideoBean>
-                videoAdapter.setNewData(newList)
+                        //删除选中的视频，真实位置，
+                        for (i in videoSelectList.indices) {
+                            val videoBean = videoSelectList[i]
+                            FileUtils.delete(videoBean.videoPath)
+                        }
+                        //获取两个集合的差集,更新适配器
+                        @Suppress("UNCHECKED_CAST")
+                        val newList: MutableList<VideoBean> =
+                            CollectionUtils.subtract(
+                                videoAdapter.data,
+                                videoSelectList
+                            ) as MutableList<VideoBean>
+                        videoAdapter.setNewData(newList)
+                    }).create().show()
             }
         }
+
+        ivBack.setOnClickListener { finish() }
     }
 
     override fun onItemChildClick(adapter: BaseQuickAdapter<*, *>?, view: View?, position: Int) {
         when (view?.id) {
             R.id.ivVideo -> {
                 //跳转到视频播放页面
+                val intent = Intent(this, VideoPlayerActivity::class.java)
+                intent.putExtra("videoBean", videoAdapter.data[position])
+                startActivity(intent)
             }
             R.id.ivSelect -> {
                 //如果是选择视频上传，则只能单选上传，如果是从相机页面进入的则可多选删除
@@ -119,5 +135,14 @@ class VideosActivity : AppCompatActivity(), BaseQuickAdapter.OnItemChildClickLis
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        GlobalScope.launch(Dispatchers.Main) {
+            //等待异步执行结果
+            files = getVideoFiles()
+            pbVideos.visibility = View.GONE
+            videoAdapter.setNewData(files)
+        }
+    }
 }
 

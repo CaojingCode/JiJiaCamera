@@ -35,6 +35,9 @@
         <activity android:name="com.caojing.cameralibrary.activity.JiJiaCameraActivity"/>
 
         <activity android:name=".activity.VideosActivity"></activity>
+        <activity android:name=".activity.VideoPlayerActivity"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
+            android:screenOrientation="portrait"/>
 
     </application>
 

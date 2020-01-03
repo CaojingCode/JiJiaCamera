@@ -17,6 +17,7 @@ import com.caojing.cameralibrary.util.dp2px
 interface RecordButtonCallBack {
     fun startRecord()
     fun recordFinsh()
+    fun updateTime(time:Int)
 }
 
 /**
@@ -42,7 +43,7 @@ class CircleProgressBar(context: Context, attrs: AttributeSet?) : View(context, 
     // 圆的外接圆
     private lateinit var mRectF: RectF
     //progress max value 60S
-    private var mMaxValue = 100 * 6
+    private var mMaxValue = 610
     //per progress value
     private var mProgressValue: Int = 0
     //是否开始record
@@ -65,6 +66,7 @@ class CircleProgressBar(context: Context, attrs: AttributeSet?) : View(context, 
         override fun handleMessage(msg: Message) {
             super.handleMessage(msg)
             ++mProgressValue
+            callBack?.updateTime(mProgressValue/10)
             postInvalidate()
             //当没有达到最大值时一直绘制
             if (mProgressValue <= mMaxValue) {

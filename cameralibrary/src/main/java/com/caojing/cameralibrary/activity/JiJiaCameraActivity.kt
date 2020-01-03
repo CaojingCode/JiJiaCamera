@@ -1,5 +1,6 @@
 package com.caojing.cameralibrary.activity
 
+import android.annotation.SuppressLint
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -9,12 +10,16 @@ import android.location.LocationManager
 import android.media.ExifInterface
 import android.os.Bundle
 import android.os.Environment
+import android.os.Handler
 import android.util.Log
+import android.view.Gravity
+import android.view.View
 import android.view.animation.Animation
 import android.view.animation.AnimationSet
 import android.view.animation.ScaleAnimation
 import android.view.animation.TranslateAnimation
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.os.postDelayed
 import com.blankj.utilcode.util.*
 import com.caojing.cameralibrary.R
 import com.caojing.cameralibrary.bean.VideoBean
@@ -26,6 +31,7 @@ import com.otaliastudios.cameraview.controls.Flash
 import com.otaliastudios.cameraview.controls.Mode
 import com.otaliastudios.cameraview.gesture.Gesture
 import com.otaliastudios.cameraview.gesture.GestureAction
+import com.qmuiteam.qmui.util.QMUIStatusBarHelper
 import kotlinx.android.synthetic.main.camera_layot.*
 import kotlinx.coroutines.*
 import java.io.File
@@ -55,6 +61,7 @@ class JiJiaCameraActivity : AppCompatActivity(), CoroutineScope by MainScope() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        QMUIStatusBarHelper.translucent(this)
         setContentView(R.layout.camera_layot)
         initView()
         var intentFilter = IntentFilter()
@@ -66,9 +73,10 @@ class JiJiaCameraActivity : AppCompatActivity(), CoroutineScope by MainScope() {
             if (files.size > 1) {
                 val file = files[1]
                 ivVideo.loadVideoImage(file.videoPath)
-                ToastUtils.showShort(file.videoPath)
             }
         }
+
+        ivBack.setOnClickListener { finish() }
     }
 
     private fun initView() {
@@ -92,7 +100,7 @@ class JiJiaCameraActivity : AppCompatActivity(), CoroutineScope by MainScope() {
                 videoBean.videoTimestamp = TimeUtils.getNowMills()
                 videoBean.videoPath = result.file.path
                 videoBean.videoDuration = getVideoDuration(result.file.path)
-                videoBean.deviceType=DeviceUtils.getModel()
+                videoBean.deviceType = DeviceUtils.getModel()
                 videoInfoList.add(videoBean)
                 //将所有的视频信息集合转换成json字符串
                 val videoJson = GsonUtils.toJson(videoInfoList)
@@ -136,31 +144,45 @@ class JiJiaCameraActivity : AppCompatActivity(), CoroutineScope by MainScope() {
 
             //摄像头旋转要执行的操作，逆时针
             override fun onOrientationChanged(orientation: Int) {
-                showToast("摄像头旋转了$orientation 度")
+//                showToast("摄像头旋转了$orientation 度")
             }
 
             //自动对焦开始
-            override fun onAutoFocusStart(point: PointF) {
-                super.onAutoFocusStart(point)
-            }
-
-            //自动对焦结束
-            override fun onAutoFocusEnd(successful: Boolean, point: PointF) {
-                super.onAutoFocusEnd(successful, point)
-            }
+//            override fun onAutoFocusStart(point: PointF) {
+//                super.onAutoFocusStart(point)
+//            }
+//
+//            //自动对焦结束
+//            override fun onAutoFocusEnd(successful: Boolean, point: PointF) {
+//                super.onAutoFocusEnd(successful, point)
+//            }
         })
 
         btnVideo.callBack = object : RecordButtonCallBack {
+            override fun updateTime(time: Int) {
+                var longTime = time * 1000.toLong()
+                if (longTime>=1000){
+                    longTime -= 1000
+                }
+                tvTime.text = longTime.getTimeMString()
+                if (time==60){
+                    ToastUtils.setGravity(Gravity.CENTER,0,0)
+                    ToastUtils.showShort("最长可录制60秒视频")
+                }
+            }
+
             override fun startRecord() {
                 if (cameraKitView.isTakingVideo) {
                     return
                 }
                 val path = getTempFilePath()
                 cameraKitView.takeVideo(File(path))
+                tvTime.visibility= View.VISIBLE
             }
 
             override fun recordFinsh() {
                 cameraKitView.stopVideo()
+                tvTime.visibility= View.GONE
             }
 
         }
@@ -171,11 +193,10 @@ class JiJiaCameraActivity : AppCompatActivity(), CoroutineScope by MainScope() {
     }
 
 
-
-
     override fun onDestroy() {
         super.onDestroy()
         cancel()//取消协程
         unregisterReceiver(broadcastReceiver)
     }
+
 }
