@@ -53,11 +53,11 @@ dependencies {
 
 
     //https://github.com/CarGuo/GSYVideoPlayer
-    api 'com.shuyu:gsyVideoPlayer-java:7.1.2'
+    implementation 'com.shuyu:gsyVideoPlayer-java:7.1.2'
 
-    api 'com.shuyu:gsyVideoPlayer-armv5:7.1.2'
-    api 'com.shuyu:gsyVideoPlayer-armv7a:7.1.2'
-    api 'com.shuyu:gsyVideoPlayer-arm64:7.1.2'
-    api 'com.shuyu:gsyVideoPlayer-x64:7.1.2'
-    api 'com.shuyu:gsyVideoPlayer-x86:7.1.2'
+//    implementation 'com.shuyu:gsyVideoPlayer-armv5:7.1.2'
+    implementation 'com.shuyu:gsyVideoPlayer-armv7a:7.1.2'
+    implementation 'com.shuyu:gsyVideoPlayer-arm64:7.1.2'
+//    implementation 'com.shuyu:gsyVideoPlayer-x64:7.1.2'
+//    implementation 'com.shuyu:gsyVideoPlayer-x86:7.1.2'
 }
