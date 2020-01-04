@@ -84,6 +84,7 @@ suspend fun getVideoFiles() =
     withContext(Dispatchers.IO) {
         //异步执行
         val videoBeans = getVideoInfoList()
+        videoBeans.sort()
 //        val fileDir = String.format(
 //            Locale.getDefault(),
 //            "%s/JiJiaRecord/",
@@ -114,7 +115,6 @@ suspend fun getVideoFiles() =
                 )
             }
         }
-
         videoBeans
     }
 

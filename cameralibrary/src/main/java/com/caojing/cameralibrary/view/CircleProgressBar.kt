@@ -32,6 +32,8 @@ class CircleProgressBar(context: Context, attrs: AttributeSet?) : View(context, 
     private lateinit var mRecordPaint: Paint
     // 录制时点击的圆形按钮
     private lateinit var mBgPaint: Paint
+    //圆形按钮的灰色背景
+    private lateinit var mBgBgPaint: Paint
     // 画笔宽度
     private var mStrokeWidth: Float = 0f
     // 圆形按钮半径
@@ -87,6 +89,12 @@ class CircleProgressBar(context: Context, attrs: AttributeSet?) : View(context, 
         mBgPaint.strokeWidth = mStrokeWidth
         mBgPaint.style = Paint.Style.FILL
 
+        mBgBgPaint=Paint()
+        mBgBgPaint.isAntiAlias = true
+        mBgBgPaint.color = context.resources.getColor(R.color.grayColor)
+        mBgBgPaint.strokeWidth = mStrokeWidth
+        mBgBgPaint.style = Paint.Style.FILL
+
         mRecordPaint = Paint()
         mRecordPaint.isAntiAlias = true
         mRecordPaint.color = context.resources.getColor(R.color.mainColor)
@@ -113,8 +121,15 @@ class CircleProgressBar(context: Context, attrs: AttributeSet?) : View(context, 
         if (mIsStartRecord) {
             canvas?.drawCircle(
                 (mWidth / 2).toFloat(),
-                (mHeight / 2).toFloat(), (mRadius * 1.5).toFloat(), mBgPaint
+                (mHeight / 2).toFloat(), (mRadius * 1.6).toFloat(), mBgBgPaint
             )
+
+            canvas?.drawCircle(
+                (mWidth / 2).toFloat(),
+                (mHeight / 2).toFloat(), (mRadius * 0.5).toFloat(), mBgPaint
+            )
+
+
 
             if (mProgressValue <= mMaxValue) {
                 //left--->距Y轴的距离
@@ -125,6 +140,7 @@ class CircleProgressBar(context: Context, attrs: AttributeSet?) : View(context, 
                 mRectF.top = mArcValue
                 mRectF.right = mWidth - mArcValue
                 mRectF.bottom = mHeight - mArcValue
+
                 canvas?.drawArc(
                     mRectF,
                     -90f,
@@ -143,7 +159,12 @@ class CircleProgressBar(context: Context, attrs: AttributeSet?) : View(context, 
                 }
             }
         } else {
-            canvas?.drawCircle((mWidth / 2).toFloat(), (mHeight / 2).toFloat(), mRadius, mBgPaint)
+            canvas?.drawCircle(
+                (mWidth / 2).toFloat(),
+                (mHeight / 2).toFloat(), (mRadius * 1.2).toFloat(), mBgBgPaint
+            )
+            canvas?.drawCircle((mWidth / 2).toFloat(), (mHeight / 2).toFloat(), (mRadius * 0.8).toFloat(), mBgPaint)
+
         }
     }
 

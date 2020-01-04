@@ -34,14 +34,23 @@
 
     <com.caojing.cameralibrary.view.CircleProgressBar
         android:id="@+id/btnVideo"
-        android:layout_width="120dp"
-        android:layout_height="120dp"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
         android:layout_marginBottom="50dp"
         android:textColor="#FFFFFF"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="长按拍摄"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toTopOf="@+id/btnVideo"
+        app:layout_constraintStart_toStartOf="@+id/btnVideo"
+        app:layout_constraintEnd_toEndOf="@+id/btnVideo"
+        android:layout_marginBottom="10dp"/>
 
     <com.qmuiteam.qmui.widget.QMUIRadiusImageView
         android:id="@+id/ivVideo"
@@ -49,11 +58,20 @@
         android:layout_height="54dp"
         android:layout_marginRight="30dp"
         android:scaleType="centerCrop"
-        android:src="#000000"
+        android:src="@drawable/defalt_img"
         app:layout_constraintBottom_toBottomOf="@+id/btnVideo"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="@+id/btnVideo"
         app:qmui_corner_radius="6dp" />
+
+    <ImageView
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        app:layout_constraintBottom_toBottomOf="@+id/ivVideo"
+        app:layout_constraintRight_toRightOf="@id/ivVideo"
+        app:layout_constraintLeft_toLeftOf="@+id/ivVideo"
+        app:layout_constraintTop_toTopOf="@+id/ivVideo"
+        android:src="@drawable/videologo"/>
 
     <TextView
         android:id="@+id/tvTime"

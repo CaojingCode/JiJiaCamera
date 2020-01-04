@@ -4,30 +4,27 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.content.DialogInterface
 import android.content.Intent
-import android.media.ExifInterface
 import android.os.Bundle
-import android.os.Environment
-import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
-import com.blankj.utilcode.util.*
+import com.blankj.utilcode.util.CollectionUtils
+import com.blankj.utilcode.util.ConvertUtils
+import com.blankj.utilcode.util.FileUtils
+import com.blankj.utilcode.util.GsonUtils
 import com.caojing.cameralibrary.R
-import com.caojing.cameralibrary.adapter.ItemImageView
 import com.caojing.cameralibrary.adapter.ItemTittleView
 import com.caojing.cameralibrary.adapter.VideosAdapter
 import com.caojing.cameralibrary.bean.VideoBean
-import com.caojing.cameralibrary.util.*
+import com.caojing.cameralibrary.util.DividerDecoration
+import com.caojing.cameralibrary.util.getVideoFiles
+import com.caojing.cameralibrary.util.showToast
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.qmuiteam.qmui.util.QMUIStatusBarHelper
 import kotlinx.android.synthetic.main.activity_videos.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import java.io.File
-import java.io.IOException
-import java.util.*
 
 class VideosActivity : AppCompatActivity(), BaseQuickAdapter.OnItemChildClickListener {
 
@@ -118,7 +115,7 @@ class VideosActivity : AppCompatActivity(), BaseQuickAdapter.OnItemChildClickLis
                 //跳转到视频播放页面
                 val intent = Intent(this, VideoPlayerActivity::class.java)
                 intent.putExtra("videoBean", videoAdapter.data[position])
-                startActivity(intent)
+                startActivityForResult(intent, 2020)
             }
             R.id.ivSelect -> {
                 //如果是选择视频上传，则只能单选上传，如果是从相机页面进入的则可多选删除
@@ -135,13 +132,26 @@ class VideosActivity : AppCompatActivity(), BaseQuickAdapter.OnItemChildClickLis
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        GlobalScope.launch(Dispatchers.Main) {
-            //等待异步执行结果
-            files = getVideoFiles()
-            pbVideos.visibility = View.GONE
-            videoAdapter.setNewData(files)
+//    override fun onResume() {
+//        super.onResume()
+//        GlobalScope.launch(Dispatchers.Main) {
+//            //等待异步执行结果
+//            files = getVideoFiles()
+//            pbVideos.visibility = View.GONE
+//            videoAdapter.setNewData(files)
+//        }
+//    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == Activity.RESULT_OK) {
+            if (requestCode == 2020) {
+                val videoBean = data?.getSerializableExtra("videoBean")
+                if (videoBean != null) {
+                    val position = videoAdapter.data.indexOf(videoBean)
+                    videoAdapter.remove(position)
+                }
+            }
         }
     }
 }

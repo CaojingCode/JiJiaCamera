@@ -19,4 +19,8 @@ data class VideoBean(
 
     var deviceType: String = ""  //设备型号
 
-):Serializable
+):Serializable,Comparable<VideoBean> {
+    override fun compareTo(other: VideoBean): Int {
+       return (other.videoTimestamp-this.videoTimestamp).toInt()
+    }
+}
