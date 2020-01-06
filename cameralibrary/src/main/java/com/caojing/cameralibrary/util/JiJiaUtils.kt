@@ -270,7 +270,7 @@ fun Activity.selectLookVideo() {
 /**
  * 跳转到视频播放页面
  */
-fun Activity.startVideoPlayer(videoBean: String) {
+fun Activity.startVideoPlayer(videoBean: VideoBean) {
     val intent = Intent(this, VideoPlayerActivity::class.java)
     intent.putExtra("videoBean", videoBean)
     this.startActivity(intent)
