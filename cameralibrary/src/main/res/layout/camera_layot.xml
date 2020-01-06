@@ -12,8 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:keepScreenOn="true"
-        app:cameraVideoSizeBiggest="true"
-        app:cameraVideoSizeMaxWidth="1280"/>
+        app:cameraVideoSizeMaxWidth="1080"/>
 
     <ImageView
         android:id="@+id/ivBg"

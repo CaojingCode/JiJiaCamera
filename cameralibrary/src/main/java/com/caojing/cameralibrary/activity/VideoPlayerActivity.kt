@@ -13,6 +13,7 @@ import com.blankj.utilcode.util.TimeUtils
 import com.caojing.cameralibrary.R
 import com.caojing.cameralibrary.bean.VideoBean
 import com.caojing.cameralibrary.util.loadVideoImage
+import com.caojing.cameralibrary.view.JiJiaStandardGSYVideoPlayer
 import com.qmuiteam.qmui.util.QMUIStatusBarHelper
 import com.shuyu.gsyvideoplayer.GSYBaseActivityDetail
 import com.shuyu.gsyvideoplayer.builder.GSYVideoOptionBuilder
@@ -28,9 +29,11 @@ import java.text.SimpleDateFormat
  * 2020/1/21529
  * 不为往事扰，余生自愿笑
  */
-class VideoPlayerActivity : GSYBaseActivityDetail<StandardGSYVideoPlayer>() {
+class VideoPlayerActivity : GSYBaseActivityDetail<JiJiaStandardGSYVideoPlayer>() {
 
     var videoBean: VideoBean = VideoBean()
+
+
 
     /**
      * 点击了全屏
@@ -48,7 +51,7 @@ class VideoPlayerActivity : GSYBaseActivityDetail<StandardGSYVideoPlayer>() {
     /**
      * 播放控件
      */
-    override fun getGSYVideoPlayer(): StandardGSYVideoPlayer {
+    override fun getGSYVideoPlayer(): JiJiaStandardGSYVideoPlayer {
         return videoView
     }
 
@@ -70,6 +73,7 @@ class VideoPlayerActivity : GSYBaseActivityDetail<StandardGSYVideoPlayer>() {
             .setLockLand(false)
             .setShowFullAnimation(false)
             .setNeedLockFull(true)
+            .setNeedShowWifiTip(false)
             .setSeekRatio(1f)
     }
 
@@ -97,6 +101,9 @@ class VideoPlayerActivity : GSYBaseActivityDetail<StandardGSYVideoPlayer>() {
         }
         tvDevType.text = "设备型号：${deviceType}"
 
+        if(videoBean.isOnlyPlay){
+            llPlayerBottom.visibility = View.GONE
+        }
         llPlayerBottom.setOnClickListener {
             //删除视频
             AlertDialog.Builder(this)

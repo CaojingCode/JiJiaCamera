@@ -18,13 +18,16 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
 import com.caojing.cameralibrary.R
 import com.caojing.cameralibrary.activity.JiJiaCameraActivity
+import com.caojing.cameralibrary.activity.VideoPlayerActivity
 import com.caojing.cameralibrary.activity.VideosActivity
 import com.caojing.cameralibrary.adapter.ItemTittleView
 import com.caojing.cameralibrary.bean.VideoBean
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.withContext
+import java.io.BufferedReader
 import java.io.File
+import java.io.FileReader
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
@@ -170,7 +173,10 @@ fun getTempStringPath(): String {
 /**
  * 创建文件路径
  */
-fun getTempFilePath(): String {
+fun Context.getTempFilePath(): String {
+//    this.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS)?.absolutePath
+
+
     val fileDir = String.format(
         Locale.getDefault(),
         "%s/JiJiaRecord/",
@@ -190,7 +196,13 @@ fun getTempFilePath(): String {
  */
 fun getVideoInfoList(): MutableList<VideoBean> {
     val videoInfoPath = getTempStringPath()
-    val videoInfo = FileIOUtils.readFile2String(videoInfoPath)
+
+//    val videoInfo = FileIOUtils.readFile2String(videoInfoPath)
+
+    var fileReader = FileReader(videoInfoPath)
+    var buffer = BufferedReader(fileReader)
+
+    val videoInfo = buffer.readLine()
     var videos = GsonUtils.fromJson(videoInfo, Array<VideoBean>::class.java)
     if (videos == null)
         videos = emptyArray()
@@ -254,3 +266,13 @@ fun Activity.selectLookVideo() {
     intent.putExtra("isSelect", true)
     this.startActivityForResult(intent, 1000)
 }
+
+/**
+ * 跳转到视频播放页面
+ */
+fun Activity.startVideoPlayer(videoBean: String) {
+    val intent = Intent(this, VideoPlayerActivity::class.java)
+    intent.putExtra("videoBean", videoBean)
+    this.startActivity(intent)
+}
+

@@ -83,7 +83,7 @@ class JiJiaCameraActivity : AppCompatActivity(), CoroutineScope by MainScope() {
         cameraKitView.setLifecycleOwner(this)
         cameraKitView.mode = Mode.VIDEO
 //        cameraKitView.audioBitRate
-        cameraKitView.playSounds = true //快门，对焦声音
+        cameraKitView.playSounds = false //快门，对焦声音
         cameraKitView.flash = Flash.AUTO //闪光灯自动开启
         cameraKitView.mapGesture(Gesture.PINCH, GestureAction.ZOOM) //手势缩放
         cameraKitView.mapGesture(Gesture.TAP, GestureAction.AUTO_FOCUS) // 点击获取焦点

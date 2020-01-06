@@ -17,7 +17,8 @@ data class VideoBean(
 
     var isSelect: Boolean = false,//是否选中
 
-    var deviceType: String = ""  //设备型号
+    var deviceType: String = "",  //设备型号
+    var isOnlyPlay: Boolean = false//是否仅播放
 
 ):Serializable,Comparable<VideoBean> {
     override fun compareTo(other: VideoBean): Int {

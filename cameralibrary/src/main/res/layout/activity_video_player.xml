@@ -81,7 +81,7 @@
 
     </LinearLayout>
 
-    <com.shuyu.gsyvideoplayer.video.StandardGSYVideoPlayer
+    <com.caojing.cameralibrary.view.JiJiaStandardGSYVideoPlayer
         android:id="@+id/videoView"
         android:layout_width="match_parent"
         android:layout_height="281dp"
