@@ -8,17 +8,12 @@ import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
-import com.blankj.utilcode.util.CollectionUtils
-import com.blankj.utilcode.util.ConvertUtils
-import com.blankj.utilcode.util.FileUtils
-import com.blankj.utilcode.util.GsonUtils
+import com.blankj.utilcode.util.*
 import com.caojing.cameralibrary.R
 import com.caojing.cameralibrary.adapter.ItemTittleView
 import com.caojing.cameralibrary.adapter.VideosAdapter
 import com.caojing.cameralibrary.bean.VideoBean
-import com.caojing.cameralibrary.util.DividerDecoration
-import com.caojing.cameralibrary.util.getVideoFiles
-import com.caojing.cameralibrary.util.showToast
+import com.caojing.cameralibrary.util.*
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.qmuiteam.qmui.util.QMUIStatusBarHelper
 import kotlinx.android.synthetic.main.activity_videos.*
@@ -102,6 +97,7 @@ class VideosActivity : AppCompatActivity(), BaseQuickAdapter.OnItemChildClickLis
                                 videoSelectList
                             ) as MutableList<VideoBean>
                         videoAdapter.setNewData(newList)
+                        newList.updateTxt()
                     }).create().show()
             }
         }
@@ -150,6 +146,8 @@ class VideosActivity : AppCompatActivity(), BaseQuickAdapter.OnItemChildClickLis
                 if (videoBean != null) {
                     val position = videoAdapter.data.indexOf(videoBean)
                     videoAdapter.remove(position)
+                    videoAdapter.data.updateTxt()
+
                 }
             }
         }

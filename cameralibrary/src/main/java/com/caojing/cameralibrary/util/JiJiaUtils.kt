@@ -197,24 +197,20 @@ fun Context.getTempFilePath(): String {
 fun getVideoInfoList(): MutableList<VideoBean> {
     val videoInfoPath = getTempStringPath()
 
-//    val videoInfo = FileIOUtils.readFile2String(videoInfoPath)
+    val videoInfo = FileIOUtils.readFile2String(videoInfoPath)
 
-    var fileReader = FileReader(videoInfoPath)
-    var buffer = BufferedReader(fileReader)
-
-    val videoInfo = buffer.readLine()
     var videos = GsonUtils.fromJson(videoInfo, Array<VideoBean>::class.java)
     if (videos == null)
         videos = emptyArray()
     val mutableList = videos.toMutableList()
     //过滤掉不存在的文件
-    val videoList = mutableListOf<VideoBean>()
-    for (i in mutableList.indices) {
-        if (FileUtils.isFileExists(mutableList[i].videoPath)) {
-            videoList.add(mutableList[i])
-        }
-    }
-    return videoList
+//    val videoList = mutableListOf<VideoBean>()
+//    for (i in mutableList.indices) {
+//        if (FileUtils.isFileExists(mutableList[i].videoPath)) {
+//            videoList.add(mutableList[i])
+//        }
+//    }
+    return mutableList
 }
 
 fun getVideoList() {
@@ -276,3 +272,19 @@ fun Activity.startVideoPlayer(videoBean: VideoBean) {
     this.startActivity(intent)
 }
 
+/**
+ * 根据最新的视频文件更新txt文件信息
+ */
+fun MutableList<VideoBean>.updateTxt(){
+    val arrayList= mutableListOf<VideoBean>()
+    for (i in this.indices){
+        val address= this[i].videoAddress
+        if (address.isNotEmpty()){
+            arrayList.add(this[i])
+        }
+    }
+    //将所有的视频信息集合转换成json字符串
+    val videoJson = GsonUtils.toJson(arrayList)
+    //将json 字符串写到文件中并保存
+    FileIOUtils.writeFileFromString(getTempStringPath(), videoJson)
+}
