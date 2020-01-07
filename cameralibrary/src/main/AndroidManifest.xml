@@ -31,9 +31,7 @@
 
 
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <application
-        android:requestLegacyExternalStorage="true"
-        tools:targetApi="q">
+    <application>
         <activity android:name="com.caojing.cameralibrary.activity.JiJiaCameraActivity"/>
 
         <activity android:name=".activity.VideosActivity"></activity>
