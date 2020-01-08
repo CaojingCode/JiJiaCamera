@@ -79,9 +79,13 @@ class VideosActivity : AppCompatActivity(), BaseQuickAdapter.OnItemChildClickLis
         llBottom.setOnClickListener {
             //删除或者上传
             //获取选中的视频
+            var position = -1
             val videoSelectList = mutableListOf<VideoBean>()
             for (i in videoAdapter.data.indices) {
                 if (videoAdapter.data[i].isSelect) {
+                    if(position == -1){
+                        position = i
+                    }
                     videoSelectList.add(videoAdapter.data[i])
                 }
             }
@@ -98,9 +102,15 @@ class VideosActivity : AppCompatActivity(), BaseQuickAdapter.OnItemChildClickLis
                 .setPositiveButton("确定", DialogInterface.OnClickListener { dialog, which ->
 
                     //删除选中的视频，真实位置，
-                    for (i in videoSelectList.indices) {
-                        val videoBean = videoSelectList[i]
-                        FileUtils.delete(videoBean.videoPath)
+//                    for (i in videoSelectList.indices) {
+//                        val videoBean = videoSelectList[i]
+//                        FileUtils.delete(videoBean.videoPath)
+//                    }
+                    for (i in videoAdapter.data.size -1 downTo  0) {
+                        if (videoAdapter.data[i].isSelect) {
+                            FileUtils.delete(videoAdapter.data[i].videoPath)
+                            init(i-1)
+                        }
                     }
                     //获取两个集合的差集,更新适配器
                     @Suppress("UNCHECKED_CAST")
@@ -111,6 +121,7 @@ class VideosActivity : AppCompatActivity(), BaseQuickAdapter.OnItemChildClickLis
                         ) as MutableList<VideoBean>
                     videoAdapter.setNewData(newList)
                     newList.updateTxt()
+
                 }).create().show()
         }
 
@@ -170,8 +181,17 @@ class VideosActivity : AppCompatActivity(), BaseQuickAdapter.OnItemChildClickLis
                         videoAdapter.remove(position)
                         videoAdapter.data.updateTxt()
 
+                        init(position-1)
                     }
                 }
+            }
+        }
+    }
+
+    fun init(position: Int){
+        if(position < videoAdapter.data.size && position >= 0){
+            if(videoAdapter.data[position].viewType == ItemTittleView){
+                videoAdapter.remove(position)
             }
         }
     }
