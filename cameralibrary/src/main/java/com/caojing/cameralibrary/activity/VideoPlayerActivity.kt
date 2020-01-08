@@ -34,7 +34,6 @@ class VideoPlayerActivity : GSYBaseActivityDetail<JiJiaStandardGSYVideoPlayer>()
     var videoBean: VideoBean = VideoBean()
 
 
-
     /**
      * 点击了全屏
      */
@@ -86,7 +85,7 @@ class VideoPlayerActivity : GSYBaseActivityDetail<JiJiaStandardGSYVideoPlayer>()
         videoBean = intent.getSerializableExtra("videoBean") as VideoBean
         initVideoBuilderMode()
         videoView.backButton.visibility = View.GONE
-
+        var isSelect = intent.getBooleanExtra("isSelect", false)
         tvTime.text =
             "拍摄时间：${TimeUtils.millis2String(videoBean.videoTimestamp, "yyyy/MM/dd HH:mm")}"
         var videoAddress = videoBean.videoAddress
@@ -96,14 +95,34 @@ class VideoPlayerActivity : GSYBaseActivityDetail<JiJiaStandardGSYVideoPlayer>()
         tvAddress.text = "拍摄位置：${videoAddress}"
 
         var deviceType = videoBean.deviceType
-        if (deviceType == "null"||deviceType.isEmpty()) {
+        if (deviceType == "null" || deviceType.isEmpty()) {
             deviceType = "-"
         }
         tvDevType.text = "设备型号：${deviceType}"
 
-        if(videoBean.isOnlyPlay){
+        if (videoBean.isOnlyPlay) {
+            //播放
             llPlayerBottom.visibility = View.GONE
+            btnUpdate.visibility = View.GONE
+        } else {
+            if (isSelect){
+                //上传
+                llPlayerBottom.visibility = View.GONE
+            }else{
+                //删除
+                btnUpdate.visibility = View.GONE
+            }
+
         }
+
+        btnUpdate.setOnClickListener {
+            //上传开始
+            val intent = Intent()
+            intent.putExtra("videoBean", videoBean)
+            setResult(Activity.RESULT_OK, intent)
+            finish()
+        }
+
         llPlayerBottom.setOnClickListener {
             //删除视频
             AlertDialog.Builder(this)

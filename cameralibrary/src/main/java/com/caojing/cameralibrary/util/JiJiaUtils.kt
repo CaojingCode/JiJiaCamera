@@ -1,6 +1,5 @@
 package com.caojing.cameralibrary.util
 
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
@@ -25,9 +24,7 @@ import com.caojing.cameralibrary.bean.VideoBean
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.withContext
-import java.io.BufferedReader
 import java.io.File
-import java.io.FileReader
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
@@ -148,7 +145,8 @@ fun ImageView.loadVideoImage(videoPath: String) {
         RequestOptions()
             .frame(1)//单位微秒
             .centerCrop()
-            .error(R.color.white)
+            .placeholder(R.drawable.defalt_img)
+            .error(R.drawable.defalt_img)
             .diskCacheStrategy(DiskCacheStrategy.ALL)
     )
         .load(videoPath)
@@ -202,7 +200,6 @@ fun getVideoInfoList(): MutableList<VideoBean> {
     var videos = GsonUtils.fromJson(videoInfo, Array<VideoBean>::class.java)
     if (videos == null)
         videos = emptyArray()
-    val mutableList = videos.toMutableList()
     //过滤掉不存在的文件
 //    val videoList = mutableListOf<VideoBean>()
 //    for (i in mutableList.indices) {
@@ -210,7 +207,7 @@ fun getVideoInfoList(): MutableList<VideoBean> {
 //            videoList.add(mutableList[i])
 //        }
 //    }
-    return mutableList
+    return videos.toMutableList()
 }
 
 fun getVideoList() {

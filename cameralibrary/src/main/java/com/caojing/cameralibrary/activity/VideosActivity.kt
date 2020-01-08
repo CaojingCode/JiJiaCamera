@@ -36,9 +36,11 @@ class VideosActivity : AppCompatActivity(), BaseQuickAdapter.OnItemChildClickLis
         setContentView(R.layout.activity_videos)
         isSelect = intent.getBooleanExtra("isSelect", false)
         if (isSelect) {
-            tvBottom.text = "上传"
+            //上传
+            tvBottom.visibility=View.GONE
         } else {
-            tvBottom.text = "删除"
+            //删除
+            btnUpdate.visibility=View.GONE
         }
         rlVideos.layoutManager = GridLayoutManager(this, 4)
         rlVideos.addItemDecoration(DividerDecoration(ConvertUtils.dp2px(5f)))
@@ -56,6 +58,24 @@ class VideosActivity : AppCompatActivity(), BaseQuickAdapter.OnItemChildClickLis
             videoAdapter.setNewData(files)
         }
         videoAdapter.onItemChildClickListener = this
+        btnUpdate.setOnClickListener {
+            //上传
+            val videoSelectList = mutableListOf<VideoBean>()
+            for (i in videoAdapter.data.indices) {
+                if (videoAdapter.data[i].isSelect) {
+                    videoSelectList.add(videoAdapter.data[i])
+                }
+            }
+            if (videoSelectList.size <= 0) {
+                showToast("请最少选中一个")
+                return@setOnClickListener
+            }
+            val intent = Intent()
+            intent.putExtra("videoBean", GsonUtils.toJson(videoSelectList[0]))
+            setResult(Activity.RESULT_OK, intent)
+            finish()
+        }
+
         llBottom.setOnClickListener {
             //删除或者上传
             //获取选中的视频
@@ -69,37 +89,29 @@ class VideosActivity : AppCompatActivity(), BaseQuickAdapter.OnItemChildClickLis
                 showToast("请最少选中一个")
                 return@setOnClickListener
             }
-            if (isSelect) {
-                //上传
-                val intent = Intent()
-                intent.putExtra("videoBean", GsonUtils.toJson(videoSelectList[0]))
-                setResult(Activity.RESULT_OK, intent)
-                finish()
-            } else {
-                //删除
-                AlertDialog.Builder(this)
-                    .setMessage("是否确认删除带看视频")
-                    .setNegativeButton("取消", DialogInterface.OnClickListener { dialog, which ->
-                        dialog.dismiss()
-                    })
-                    .setPositiveButton("确定", DialogInterface.OnClickListener { dialog, which ->
+            //删除
+            AlertDialog.Builder(this)
+                .setMessage("是否确认删除带看视频")
+                .setNegativeButton("取消", DialogInterface.OnClickListener { dialog, which ->
+                    dialog.dismiss()
+                })
+                .setPositiveButton("确定", DialogInterface.OnClickListener { dialog, which ->
 
-                        //删除选中的视频，真实位置，
-                        for (i in videoSelectList.indices) {
-                            val videoBean = videoSelectList[i]
-                            FileUtils.delete(videoBean.videoPath)
-                        }
-                        //获取两个集合的差集,更新适配器
-                        @Suppress("UNCHECKED_CAST")
-                        val newList: MutableList<VideoBean> =
-                            CollectionUtils.subtract(
-                                videoAdapter.data,
-                                videoSelectList
-                            ) as MutableList<VideoBean>
-                        videoAdapter.setNewData(newList)
-                        newList.updateTxt()
-                    }).create().show()
-            }
+                    //删除选中的视频，真实位置，
+                    for (i in videoSelectList.indices) {
+                        val videoBean = videoSelectList[i]
+                        FileUtils.delete(videoBean.videoPath)
+                    }
+                    //获取两个集合的差集,更新适配器
+                    @Suppress("UNCHECKED_CAST")
+                    val newList: MutableList<VideoBean> =
+                        CollectionUtils.subtract(
+                            videoAdapter.data,
+                            videoSelectList
+                        ) as MutableList<VideoBean>
+                    videoAdapter.setNewData(newList)
+                    newList.updateTxt()
+                }).create().show()
         }
 
         ivBack.setOnClickListener { finish() }
@@ -110,6 +122,7 @@ class VideosActivity : AppCompatActivity(), BaseQuickAdapter.OnItemChildClickLis
             R.id.ivVideo -> {
                 //跳转到视频播放页面
                 val intent = Intent(this, VideoPlayerActivity::class.java)
+                intent.putExtra("isSelect",isSelect)
                 intent.putExtra("videoBean", videoAdapter.data[position])
                 startActivityForResult(intent, 2020)
             }
@@ -142,12 +155,22 @@ class VideosActivity : AppCompatActivity(), BaseQuickAdapter.OnItemChildClickLis
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == Activity.RESULT_OK) {
             if (requestCode == 2020) {
-                val videoBean = data?.getSerializableExtra("videoBean")
-                if (videoBean != null) {
-                    val position = videoAdapter.data.indexOf(videoBean)
-                    videoAdapter.remove(position)
-                    videoAdapter.data.updateTxt()
+                if (isSelect){
+                    //上传
+                    val videoBean = data?.getSerializableExtra("videoBean") as VideoBean
+                    val intent = Intent()
+                    intent.putExtra("videoBean", GsonUtils.toJson(videoBean))
+                    setResult(Activity.RESULT_OK, intent)
+                    finish()
+                }else{
+                    //删除
+                    val videoBean = data?.getSerializableExtra("videoBean")
+                    if (videoBean != null) {
+                        val position = videoAdapter.data.indexOf(videoBean)
+                        videoAdapter.remove(position)
+                        videoAdapter.data.updateTxt()
 
+                    }
                 }
             }
         }

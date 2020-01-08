@@ -59,6 +59,21 @@ class JiJiaCameraActivity : AppCompatActivity(), CoroutineScope by MainScope() {
         }
     }
 
+    /**
+     * 更新视频背景
+     */
+    private fun updateVideoBg(){
+        launch(Dispatchers.Main) {
+            val files = getVideoFiles()
+            if (files.size > 1) {
+                val file = files[1]
+                ivVideo.loadVideoImage(file.videoPath)
+            }else{
+                ivVideo.loadVideoImage("")
+            }
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         QMUIStatusBarHelper.translucent(this)
@@ -68,13 +83,7 @@ class JiJiaCameraActivity : AppCompatActivity(), CoroutineScope by MainScope() {
         intentFilter.addAction(VideoAddressAction)
         registerReceiver(broadcastReceiver, intentFilter)
 
-        launch(Dispatchers.Main) {
-            val files = getVideoFiles()
-            if (files.size > 1) {
-                val file = files[1]
-                ivVideo.loadVideoImage(file.videoPath)
-            }
-        }
+        updateVideoBg()
 
         ivBack.setOnClickListener { finish() }
     }
@@ -199,4 +208,9 @@ class JiJiaCameraActivity : AppCompatActivity(), CoroutineScope by MainScope() {
         unregisterReceiver(broadcastReceiver)
     }
 
+
+    override fun onResume() {
+        super.onResume()
+        updateVideoBg()
+    }
 }
