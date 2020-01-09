@@ -89,6 +89,7 @@
         app:layout_constraintTop_toBottomOf="@+id/llTopTittle" />
 
     <LinearLayout
+        android:visibility="gone"
         android:id="@+id/llBottom"
         android:layout_width="match_parent"
         android:layout_height="60dp"

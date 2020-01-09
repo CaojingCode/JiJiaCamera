@@ -74,6 +74,9 @@ class VideosActivity : AppCompatActivity(), BaseQuickAdapter.OnItemChildClickLis
             }
 
             videoAdapter.setNewData(files)
+            if(files.isNotEmpty()){
+                llBottom.visibility = View.VISIBLE
+            }
         }
         videoAdapter.onItemChildClickListener = this
         btnUpdate.setOnClickListener {
@@ -206,6 +209,9 @@ class VideosActivity : AppCompatActivity(), BaseQuickAdapter.OnItemChildClickLis
         if (position < videoAdapter.data.size && position >= 0) {
             if (videoAdapter.data[position].viewType == ItemTittleView) {
                 videoAdapter.remove(position)
+                if(videoAdapter.data.isNotEmpty()){
+                    llBottom.visibility = View.GONE
+                }
             }
         }
     }
