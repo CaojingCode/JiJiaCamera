@@ -5,7 +5,9 @@ import android.app.AlertDialog
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import com.blankj.utilcode.util.*
@@ -51,6 +53,13 @@ class VideosActivity : AppCompatActivity(), BaseQuickAdapter.OnItemChildClickLis
                 else -> 1
             }
         }
+        val view = LayoutInflater.from(this).inflate(R.layout.empty_video,null)
+        val textVideo = view.findViewById<TextView>(R.id.textVideo)
+        textVideo.setOnClickListener {
+            //去拍摄
+            finish()
+        }
+        videoAdapter.emptyView = view
         GlobalScope.launch(Dispatchers.Main) {
             //等待异步执行结果
             files = getVideoFiles()
