@@ -37,6 +37,7 @@ import java.util.*
  */
 const val VideoAddress = "VideoAddress"
 const val VideoAddressAction = "VideoAddressAction"
+const val SelectPathKey="selectPath"
 
 fun Float.dp2px(): Float {
     val scale = Resources.getSystem().displayMetrics.density
@@ -277,11 +278,12 @@ fun Activity.startRecordVideo() {
 }
 
 /**
- * 跳转到选择图片页面
+ * 跳转到选择视频页面
  */
-fun Activity.selectLookVideo() {
+fun Activity.selectLookVideo(selectPath :String="") {
     val intent = Intent(this, VideosActivity::class.java)
     intent.putExtra("isSelect", true)
+    intent.putExtra(SelectPathKey,selectPath)
     this.startActivityForResult(intent, 1000)
 }
 

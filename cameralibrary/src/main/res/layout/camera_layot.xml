@@ -44,7 +44,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="长按拍摄"
+        android:text="长按摄像"
         android:textColor="@color/white"
         app:layout_constraintBottom_toTopOf="@+id/btnVideo"
         app:layout_constraintStart_toStartOf="@+id/btnVideo"
