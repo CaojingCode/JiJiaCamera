@@ -101,11 +101,24 @@ suspend fun getVideoFiles() =
 //            videoBean.videoAddress = videoAddress
 //            videoBeans.add(videoBean)
 //        }
-        var groupTime = ""
-        for (i in videoBeans.indices) {
-            val newGroupTime = TimeUtils.millis2String(videoBeans[i].videoTimestamp, "yyyyMMdd")
-            if (groupTime != newGroupTime) {
-                groupTime = newGroupTime
+
+//        var groupTime = ""
+//        for (i in videoBeans.indices) {
+//            val newGroupTime = TimeUtils.millis2String(videoBeans[i].videoTimestamp, "yyyyMMdd")
+//            if (groupTime != newGroupTime) {
+//                groupTime = newGroupTime
+//                videoBeans.add(
+//                    i,
+//                    VideoBean(
+//                        viewType = ItemTittleView,
+//                        videoTimestamp = videoBeans[i].videoTimestamp
+//                    )
+//                )
+//            }
+//        }
+        val size = videoBeans.size -1
+        for (i in size downTo 0) {
+            if(i == 0){
                 videoBeans.add(
                     i,
                     VideoBean(
@@ -113,6 +126,18 @@ suspend fun getVideoFiles() =
                         videoTimestamp = videoBeans[i].videoTimestamp
                     )
                 )
+            } else {
+                val groupTime = TimeUtils.millis2String(videoBeans[i - 1].videoTimestamp, "yyyyMMdd")
+                val newGroupTime = TimeUtils.millis2String(videoBeans[i].videoTimestamp, "yyyyMMdd")
+                if (groupTime != newGroupTime) {
+                    videoBeans.add(
+                        i,
+                        VideoBean(
+                            viewType = ItemTittleView,
+                            videoTimestamp = videoBeans[i].videoTimestamp
+                        )
+                    )
+                }
             }
         }
         videoBeans
