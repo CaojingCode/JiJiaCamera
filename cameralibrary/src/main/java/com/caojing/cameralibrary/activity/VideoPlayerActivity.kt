@@ -10,6 +10,7 @@ import android.view.View
 import android.widget.ImageView
 import com.blankj.utilcode.util.FileUtils
 import com.blankj.utilcode.util.TimeUtils
+import com.blankj.utilcode.util.ToastUtils
 import com.caojing.cameralibrary.R
 import com.caojing.cameralibrary.bean.VideoBean
 import com.caojing.cameralibrary.util.loadVideoImage
@@ -137,6 +138,7 @@ class VideoPlayerActivity : GSYBaseActivityDetail<JiJiaStandardGSYVideoPlayer>()
                         intent.putExtra("videoBean", videoBean)
                         setResult(Activity.RESULT_OK, intent)
                         finish()
+                        ToastUtils.showShort("删除成功")
                     }
 
                 })

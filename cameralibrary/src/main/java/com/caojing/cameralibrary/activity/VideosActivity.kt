@@ -117,7 +117,7 @@ class VideosActivity : AppCompatActivity(), BaseQuickAdapter.OnItemChildClickLis
                             ) as MutableList<VideoBean>
                         videoAdapter.setNewData(newList)
                         newList.updateTxt()
-
+                        ToastUtils.showShort("删除成功")
                     }
                 })
         }

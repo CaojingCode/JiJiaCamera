@@ -175,8 +175,6 @@ class JiJiaCameraActivity : AppCompatActivity(), CoroutineScope by MainScope() {
                 }
                 tvTime.text = longTime.getTimeMString()
                 if (time == 60) {
-//                    ToastUtils.setGravity(Gravity.CENTER,0,0)
-//                    ToastUtils.showShort("最长可录制60秒视频")
                     if (isFastClick()) {
                         JiJiaFragmentDialog.create().setCancelOutSide(true)
                             .singleBtn()//两个按钮
