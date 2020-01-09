@@ -125,21 +125,39 @@ class VideoPlayerActivity : GSYBaseActivityDetail<JiJiaStandardGSYVideoPlayer>()
 
         llPlayerBottom.setOnClickListener {
             //删除视频
-            AlertDialog.Builder(this)
-                .setMessage("是否确认删除带看视频")
-                .setNegativeButton("取消", DialogInterface.OnClickListener { dialog, which ->
-                    dialog.dismiss()
+            JiJiaFragmentDialog.create()
+                .setCancelOutSide(true)
+                .multipleBtn()//两个按钮
+                .setMessage("是否确认删除带看视频？")
+                .show(supportFragmentManager)
+                .setDialogCallBack(object :JiJiaFragmentDialog.DialogCallBack{
+                    override fun btnOk() {
+                        FileUtils.delete(videoBean.videoPath)
+                        val intent = Intent()
+                        intent.putExtra("videoBean", videoBean)
+                        setResult(Activity.RESULT_OK, intent)
+                        finish()
+                    }
+
                 })
-                .setPositiveButton("确定", DialogInterface.OnClickListener { dialog, which ->
-                    FileUtils.delete(videoBean.videoPath)
-                    val intent = Intent()
-                    intent.putExtra("videoBean", videoBean)
-                    setResult(Activity.RESULT_OK, intent)
-                    finish()
-                }).create().show()
+
+
+//            AlertDialog.Builder(this)
+//                .setMessage("是否确认删除带看视频")
+//                .setNegativeButton("取消", DialogInterface.OnClickListener { dialog, which ->
+//                    dialog.dismiss()
+//                })
+//                .setPositiveButton("确定", DialogInterface.OnClickListener { dialog, which ->
+//                    FileUtils.delete(videoBean.videoPath)
+//                    val intent = Intent()
+//                    intent.putExtra("videoBean", videoBean)
+//                    setResult(Activity.RESULT_OK, intent)
+//                    finish()
+//                }).create().show()
         }
 
         ivBack.setOnClickListener { finish() }
+
     }
 
 

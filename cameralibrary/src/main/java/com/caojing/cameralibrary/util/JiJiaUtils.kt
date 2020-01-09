@@ -275,8 +275,8 @@ fun Activity.startVideoPlayer(videoBean: VideoBean) {
 fun MutableList<VideoBean>.updateTxt(){
     val arrayList= mutableListOf<VideoBean>()
     for (i in this.indices){
-        val address= this[i].videoAddress
-        if (address.isNotEmpty()){
+        val path= this[i].videoPath
+        if (path.isNotEmpty()){
             arrayList.add(this[i])
         }
     }
@@ -284,4 +284,17 @@ fun MutableList<VideoBean>.updateTxt(){
     val videoJson = GsonUtils.toJson(arrayList)
     //将json 字符串写到文件中并保存
     FileIOUtils.writeFileFromString(getTempStringPath(), videoJson)
+}
+
+private const val  MIN_CLICK_DELAY_TIME = 1000
+private  var  lastClickTime:Long=0
+
+fun isFastClick() :Boolean{
+    var flag = false
+    val curClickTime = System.currentTimeMillis()
+    if ((curClickTime - lastClickTime) >= MIN_CLICK_DELAY_TIME) {
+        flag = true
+    }
+    lastClickTime = curClickTime
+    return flag
 }
