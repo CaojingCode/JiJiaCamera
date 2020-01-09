@@ -35,9 +35,10 @@ class VideosActivity : AppCompatActivity(), BaseQuickAdapter.OnItemChildClickLis
         QMUIStatusBarHelper.translucent(this)
         setContentView(R.layout.activity_videos)
         isSelect = intent.getBooleanExtra("isSelect", false)
+        val selectPath = intent.getStringExtra(SelectPathKey)
         if (isSelect) {
             //上传
-            tvBottom.visibility = View.GONE
+            llBottom.visibility = View.GONE
         } else {
             //删除
             btnUpdate.visibility = View.GONE
@@ -55,6 +56,14 @@ class VideosActivity : AppCompatActivity(), BaseQuickAdapter.OnItemChildClickLis
             //等待异步执行结果
             files = getVideoFiles()
             pbVideos.visibility = View.GONE
+
+            for (i in files.indices) {
+                if (files[i].videoPath == selectPath) {
+                    files[i].isSelect = true
+                    break
+                }
+            }
+
             videoAdapter.setNewData(files)
         }
         videoAdapter.onItemChildClickListener = this
@@ -177,16 +186,16 @@ class VideosActivity : AppCompatActivity(), BaseQuickAdapter.OnItemChildClickLis
                         videoAdapter.remove(position)
                         videoAdapter.data.updateTxt()
 
-                        init(position-1)
+                        init(position - 1)
                     }
                 }
             }
         }
     }
 
-    fun init(position: Int){
-        if(position < videoAdapter.data.size && position >= 0){
-            if(videoAdapter.data[position].viewType == ItemTittleView){
+    fun init(position: Int) {
+        if (position < videoAdapter.data.size && position >= 0) {
+            if (videoAdapter.data[position].viewType == ItemTittleView) {
                 videoAdapter.remove(position)
             }
         }

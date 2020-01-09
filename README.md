@@ -11,6 +11,8 @@
  
  跳转到选择带看视频页面：
  selectLookVideo()
+ 支持接收一个形参，表示已上传视频的文件 路径
  
  跳转到选择视频页面可以重写onActivityResult来接收到选中的视频对象，目前只支持选中一个视频，后期可以扩展，
  通过接收"videoBean" 来接收 VideoBean 对象。
+

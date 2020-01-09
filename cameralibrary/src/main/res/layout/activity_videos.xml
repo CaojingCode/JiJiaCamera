@@ -59,7 +59,8 @@
             app:layout_constraintTop_toTopOf="@+id/ivBack"
             app:layout_constraintBottom_toBottomOf="@+id/ivBack"
             app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginRight="20dp"/>
+            android:layout_marginRight="20dp"
+            app:qmui_borderWidth="0dp"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 
