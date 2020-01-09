@@ -62,13 +62,13 @@ class JiJiaCameraActivity : AppCompatActivity(), CoroutineScope by MainScope() {
     /**
      * 更新视频背景
      */
-    private fun updateVideoBg(){
+    private fun updateVideoBg() {
         launch(Dispatchers.Main) {
             val files = getVideoFiles()
             if (files.size > 1) {
                 val file = files[1]
                 ivVideo.loadVideoImage(file.videoPath)
-            }else{
+            } else {
                 ivVideo.loadVideoImage("")
             }
         }
@@ -170,13 +170,17 @@ class JiJiaCameraActivity : AppCompatActivity(), CoroutineScope by MainScope() {
         btnVideo.callBack = object : RecordButtonCallBack {
             override fun updateTime(time: Int) {
                 var longTime = time * 1000.toLong()
-                if (longTime>=1000){
+                if (longTime >= 1000) {
                     longTime -= 1000
                 }
                 tvTime.text = longTime.getTimeMString()
-                if (time==60){
-                    ToastUtils.setGravity(Gravity.CENTER,0,0)
-                    ToastUtils.showShort("最长可录制60秒视频")
+                if (time == 60) {
+                    if (isFastClick()) {
+                        JiJiaFragmentDialog.create().setCancelOutSide(true)
+                            .singleBtn()//两个按钮
+                            .setMessage("最长可录制60秒视频")
+                            .show(supportFragmentManager)
+                    }
                 }
             }
 
@@ -186,12 +190,12 @@ class JiJiaCameraActivity : AppCompatActivity(), CoroutineScope by MainScope() {
                 }
                 val path = getTempFilePath()
                 cameraKitView.takeVideo(File(path))
-                tvTime.visibility= View.VISIBLE
+                tvTime.visibility = View.VISIBLE
             }
 
             override fun recordFinsh() {
                 cameraKitView.stopVideo()
-                tvTime.visibility= View.GONE
+                tvTime.visibility = View.GONE
             }
 
         }

@@ -37,10 +37,10 @@ class VideosActivity : AppCompatActivity(), BaseQuickAdapter.OnItemChildClickLis
         isSelect = intent.getBooleanExtra("isSelect", false)
         if (isSelect) {
             //上传
-            tvBottom.visibility=View.GONE
+            tvBottom.visibility = View.GONE
         } else {
             //删除
-            btnUpdate.visibility=View.GONE
+            btnUpdate.visibility = View.GONE
         }
         rlVideos.layoutManager = GridLayoutManager(this, 4)
         rlVideos.addItemDecoration(DividerDecoration(ConvertUtils.dp2px(5f)))
@@ -83,7 +83,7 @@ class VideosActivity : AppCompatActivity(), BaseQuickAdapter.OnItemChildClickLis
             val videoSelectList = mutableListOf<VideoBean>()
             for (i in videoAdapter.data.indices) {
                 if (videoAdapter.data[i].isSelect) {
-                    if(position == -1){
+                    if (position == -1) {
                         position = i
                     }
                     videoSelectList.add(videoAdapter.data[i])
@@ -94,37 +94,33 @@ class VideosActivity : AppCompatActivity(), BaseQuickAdapter.OnItemChildClickLis
                 return@setOnClickListener
             }
             //删除
-            AlertDialog.Builder(this)
-                .setMessage("是否确认删除带看视频")
-                .setNegativeButton("取消", DialogInterface.OnClickListener { dialog, which ->
-                    dialog.dismiss()
-                })
-                .setPositiveButton("确定", DialogInterface.OnClickListener { dialog, which ->
-
-                    //删除选中的视频，真实位置，
-//                    for (i in videoSelectList.indices) {
-//                        val videoBean = videoSelectList[i]
-//                        FileUtils.delete(videoBean.videoPath)
-//                    }
-                    for (i in videoAdapter.data.size -1 downTo  0) {
-                        if (videoAdapter.data[i].isSelect) {
-                            FileUtils.delete(videoAdapter.data[i].videoPath)
-                            init(i-1)
+            JiJiaFragmentDialog.create()
+                .setCancelOutSide(true)
+                .multipleBtn()//两个按钮
+                .setMessage("是否确认删除带看视频？")
+                .show(supportFragmentManager)
+                .setDialogCallBack(object : JiJiaFragmentDialog.DialogCallBack {
+                    override fun btnOk() {
+                        //删除选中的视频，真实位置，
+                        for (i in videoAdapter.data.size - 1 downTo 0) {
+                            if (videoAdapter.data[i].isSelect) {
+                                FileUtils.delete(videoAdapter.data[i].videoPath)
+                                init(i - 1)
+                            }
                         }
+                        //获取两个集合的差集,更新适配器
+                        @Suppress("UNCHECKED_CAST")
+                        val newList: MutableList<VideoBean> =
+                            CollectionUtils.subtract(
+                                videoAdapter.data,
+                                videoSelectList
+                            ) as MutableList<VideoBean>
+                        videoAdapter.setNewData(newList)
+                        newList.updateTxt()
+                        ToastUtils.showShort("删除成功")
                     }
-                    //获取两个集合的差集,更新适配器
-                    @Suppress("UNCHECKED_CAST")
-                    val newList: MutableList<VideoBean> =
-                        CollectionUtils.subtract(
-                            videoAdapter.data,
-                            videoSelectList
-                        ) as MutableList<VideoBean>
-                    videoAdapter.setNewData(newList)
-                    newList.updateTxt()
-
-                }).create().show()
+                })
         }
-
         ivBack.setOnClickListener { finish() }
     }
 
@@ -133,7 +129,7 @@ class VideosActivity : AppCompatActivity(), BaseQuickAdapter.OnItemChildClickLis
             R.id.ivVideo -> {
                 //跳转到视频播放页面
                 val intent = Intent(this, VideoPlayerActivity::class.java)
-                intent.putExtra("isSelect",isSelect)
+                intent.putExtra("isSelect", isSelect)
                 intent.putExtra("videoBean", videoAdapter.data[position])
                 startActivityForResult(intent, 2020)
             }
@@ -166,14 +162,14 @@ class VideosActivity : AppCompatActivity(), BaseQuickAdapter.OnItemChildClickLis
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == Activity.RESULT_OK) {
             if (requestCode == 2020) {
-                if (isSelect){
+                if (isSelect) {
                     //上传
                     val videoBean = data?.getSerializableExtra("videoBean") as VideoBean
                     val intent = Intent()
                     intent.putExtra("videoBean", GsonUtils.toJson(videoBean))
                     setResult(Activity.RESULT_OK, intent)
                     finish()
-                }else{
+                } else {
                     //删除
                     val videoBean = data?.getSerializableExtra("videoBean")
                     if (videoBean != null) {
