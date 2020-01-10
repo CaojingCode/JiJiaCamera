@@ -38,13 +38,7 @@ class VideosActivity : AppCompatActivity(), BaseQuickAdapter.OnItemChildClickLis
         setContentView(R.layout.activity_videos)
         isSelect = intent.getBooleanExtra("isSelect", false)
         val selectPath = intent.getStringExtra(SelectPathKey)
-        if (isSelect) {
-            //上传
-            llBottom.visibility = View.GONE
-        } else {
-            //删除
-            btnUpdate.visibility = View.GONE
-        }
+
         rlVideos.layoutManager = GridLayoutManager(this, 4)
         rlVideos.addItemDecoration(DividerDecoration(ConvertUtils.dp2px(5f)))
         rlVideos.adapter = videoAdapter
@@ -74,10 +68,19 @@ class VideosActivity : AppCompatActivity(), BaseQuickAdapter.OnItemChildClickLis
             }
 
             videoAdapter.setNewData(files)
-            if(files.isNotEmpty()){
-                llBottom.visibility = View.VISIBLE
+
+            if (isSelect) {
+                //上传
+                llBottom.visibility = View.GONE
+            } else {
+                //删除
+                if(files.isNotEmpty()){
+                    llBottom.visibility = View.VISIBLE
+                }
+                btnUpdate.visibility = View.GONE
             }
         }
+
         videoAdapter.onItemChildClickListener = this
         btnUpdate.setOnClickListener {
             //上传
