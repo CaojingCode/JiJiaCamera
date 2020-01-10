@@ -7,12 +7,14 @@
     android:background="#000000">
 
 
+
     <com.otaliastudios.cameraview.CameraView
         android:id="@+id/cameraKitView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:keepScreenOn="true"
-        app:cameraVideoSizeMaxWidth="1080"/>
+        app:cameraVideoSizeMaxWidth="1280"
+        />
 
     <ImageView
         android:id="@+id/ivBg"
@@ -30,6 +32,18 @@
         app:layout_constraintBottom_toBottomOf="@+id/btnVideo"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/btnVideo" />
+
+
+    <ImageView
+        android:id="@+id/ivTopBack"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginLeft="20dp"
+        android:padding="10dp"
+        android:layout_marginTop="30dp"
+        android:src="@drawable/camera_back"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <com.caojing.cameralibrary.view.CircleProgressBar
         android:id="@+id/btnVideo"

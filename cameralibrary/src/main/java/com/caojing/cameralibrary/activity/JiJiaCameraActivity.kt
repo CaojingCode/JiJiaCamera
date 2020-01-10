@@ -86,6 +86,7 @@ class JiJiaCameraActivity : AppCompatActivity(), CoroutineScope by MainScope() {
         updateVideoBg()
 
         ivBack.setOnClickListener { finish() }
+        ivTopBack.setOnClickListener { finish() }
     }
 
     private fun initView() {
