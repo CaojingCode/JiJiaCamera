@@ -126,7 +126,7 @@ class VideosActivity : AppCompatActivity(), BaseQuickAdapter.OnItemChildClickLis
                         for (i in videoAdapter.data.size - 1 downTo 0) {
                             if (videoAdapter.data[i].isSelect) {
                                 FileUtils.delete(videoAdapter.data[i].videoPath)
-                                init(i - 1)
+                                removeTittleTime(i - 1)
                             }
                         }
                         //获取两个集合的差集,更新适配器
@@ -138,6 +138,9 @@ class VideosActivity : AppCompatActivity(), BaseQuickAdapter.OnItemChildClickLis
                             ) as MutableList<VideoBean>
                         videoAdapter.setNewData(newList)
                         newList.updateTxt()
+                        if (newList.isEmpty()){
+                            llBottom.visibility=View.GONE
+                        }
                         ToastUtils.showShort("删除成功")
                     }
                 })
@@ -198,21 +201,24 @@ class VideosActivity : AppCompatActivity(), BaseQuickAdapter.OnItemChildClickLis
                         videoAdapter.remove(position)
                         videoAdapter.data.updateTxt()
 
-                        init(position - 1)
+                        removeTittleTime(position - 1)
                     }
                 }
             }
         }
     }
 
-    fun init(position: Int) {
+    /**
+     * 判断是否要删除对应的时间标题
+     */
+    fun removeTittleTime(position: Int) {
         if (position < videoAdapter.data.size && position >= 0) {
             if (videoAdapter.data[position].viewType == ItemTittleView) {
                 videoAdapter.remove(position)
-                if(videoAdapter.data.isNotEmpty()){
-                    llBottom.visibility = View.GONE
-                }
             }
+        }
+        if(videoAdapter.data.size<=0){
+            llBottom.visibility = View.GONE
         }
     }
 }
