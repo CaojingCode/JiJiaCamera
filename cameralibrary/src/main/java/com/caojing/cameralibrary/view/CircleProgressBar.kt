@@ -5,11 +5,13 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.RectF
+import android.os.Build
 import android.os.Handler
 import android.os.Message
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
+import com.blankj.utilcode.util.DeviceUtils
 import com.caojing.cameralibrary.R
 import com.caojing.cameralibrary.util.dp2px
 
@@ -17,7 +19,7 @@ import com.caojing.cameralibrary.util.dp2px
 interface RecordButtonCallBack {
     fun startRecord()
     fun recordFinsh()
-    fun updateTime(time:Int)
+    fun updateTime(time: Int)
 }
 
 /**
@@ -45,7 +47,7 @@ class CircleProgressBar(context: Context, attrs: AttributeSet?) : View(context, 
     // 圆的外接圆
     private lateinit var mRectF: RectF
     //progress max value 60S
-    private var mMaxValue = 610
+    private var mMaxValue = 600
     //per progress value
     private var mProgressValue: Int = 0
     //是否开始record
@@ -68,7 +70,7 @@ class CircleProgressBar(context: Context, attrs: AttributeSet?) : View(context, 
         override fun handleMessage(msg: Message) {
             super.handleMessage(msg)
             ++mProgressValue
-            callBack?.updateTime(mProgressValue/10)
+            callBack?.updateTime(mProgressValue / 10)
             postInvalidate()
             //当没有达到最大值时一直绘制
             if (mProgressValue <= mMaxValue) {
@@ -89,7 +91,7 @@ class CircleProgressBar(context: Context, attrs: AttributeSet?) : View(context, 
         mBgPaint.strokeWidth = mStrokeWidth
         mBgPaint.style = Paint.Style.FILL
 
-        mBgBgPaint=Paint()
+        mBgBgPaint = Paint()
         mBgBgPaint.isAntiAlias = true
         mBgBgPaint.color = context.resources.getColor(R.color.grayColor)
         mBgBgPaint.strokeWidth = mStrokeWidth
@@ -163,10 +165,17 @@ class CircleProgressBar(context: Context, attrs: AttributeSet?) : View(context, 
                 (mWidth / 2).toFloat(),
                 (mHeight / 2).toFloat(), (mRadius * 1.2).toFloat(), mBgBgPaint
             )
-            canvas?.drawCircle((mWidth / 2).toFloat(), (mHeight / 2).toFloat(), (mRadius * 0.8).toFloat(), mBgPaint)
+            canvas?.drawCircle(
+                (mWidth / 2).toFloat(),
+                (mHeight / 2).toFloat(),
+                (mRadius * 0.8).toFloat(),
+                mBgPaint
+            )
 
         }
     }
+
+
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent?): Boolean {
@@ -174,7 +183,13 @@ class CircleProgressBar(context: Context, attrs: AttributeSet?) : View(context, 
             MotionEvent.ACTION_DOWN -> {
                 mIsStartRecord = true
                 mRecordTime = System.currentTimeMillis()
-                mHandler.sendEmptyMessage(0)
+                //乐视手机需要特殊处理，保证时间最大60秒
+                if (Build.BRAND == "LeEco") {
+                    mHandler.sendEmptyMessageDelayed(0,100)
+                } else {
+                    mHandler.sendEmptyMessageDelayed(0, 1000)
+                }
+
                 //这里可以回调出去表示已经开始录制了
                 callBack?.startRecord()
             }

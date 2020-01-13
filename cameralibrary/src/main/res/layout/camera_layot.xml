@@ -14,7 +14,9 @@
         android:layout_height="match_parent"
         android:keepScreenOn="true"
         app:cameraVideoSizeMaxWidth="1280"
+        app:cameraVideoMaxDuration="60000"
         />
+
 
     <ImageView
         android:id="@+id/ivBg"
@@ -71,7 +73,6 @@
         android:layout_height="54dp"
         android:layout_marginRight="30dp"
         android:scaleType="centerCrop"
-        android:src="@drawable/defalt_img"
         app:layout_constraintBottom_toBottomOf="@+id/btnVideo"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="@+id/btnVideo"

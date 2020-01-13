@@ -8,6 +8,7 @@ import android.content.IntentFilter
 import android.graphics.PointF
 import android.location.LocationManager
 import android.media.ExifInterface
+import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.os.Handler
@@ -25,6 +26,7 @@ import com.caojing.cameralibrary.R
 import com.caojing.cameralibrary.bean.VideoBean
 import com.caojing.cameralibrary.util.*
 import com.caojing.cameralibrary.view.RecordButtonCallBack
+import com.otaliastudios.cameraview.CameraException
 import com.otaliastudios.cameraview.CameraListener
 import com.otaliastudios.cameraview.VideoResult
 import com.otaliastudios.cameraview.controls.Flash
@@ -94,15 +96,22 @@ class JiJiaCameraActivity : AppCompatActivity(), CoroutineScope by MainScope() {
         cameraKitView.mode = Mode.VIDEO
 //        cameraKitView.audioBitRate
         cameraKitView.playSounds = false //快门，对焦声音
-        cameraKitView.flash = Flash.AUTO //闪光灯自动开启
+        cameraKitView.flash = Flash.OFF //闪光灯自动开启
         cameraKitView.mapGesture(Gesture.PINCH, GestureAction.ZOOM) //手势缩放
         cameraKitView.mapGesture(Gesture.TAP, GestureAction.AUTO_FOCUS) // 点击获取焦点
 
         cameraKitView.addCameraListener(object : CameraListener() {
 
+
+            override fun onCameraError(exception: CameraException) {
+                super.onCameraError(exception)
+                LogUtils.d("录制异常=="+exception.message)
+            }
+
             override fun onVideoTaken(result: VideoResult) {
                 //获取视频文件信息，从信息文件中取到所有视频的信息json字符串
                 val videoInfoList = getVideoInfoList()
+
 
                 //将本次拍摄的视频相关信息添加到信息文件转换的集合中
                 val videoBean = VideoBean()
@@ -110,7 +119,7 @@ class JiJiaCameraActivity : AppCompatActivity(), CoroutineScope by MainScope() {
                 videoBean.videoTimestamp = TimeUtils.getNowMills()
                 videoBean.videoPath = result.file.path
                 videoBean.videoDuration = getVideoDuration(result.file.path)
-                videoBean.deviceType = DeviceUtils.getModel()
+                videoBean.deviceType = DeviceUtils.getModel()+"-"+ Build.BRAND
                 videoInfoList.add(videoBean)
                 //将所有的视频信息集合转换成json字符串
                 val videoJson = GsonUtils.toJson(videoInfoList)
@@ -171,12 +180,14 @@ class JiJiaCameraActivity : AppCompatActivity(), CoroutineScope by MainScope() {
         btnVideo.callBack = object : RecordButtonCallBack {
             override fun updateTime(time: Int) {
                 var longTime = time * 1000.toLong()
-                if (longTime >= 1000) {
-                    longTime -= 1000
-                }
+//                if (longTime >= 1000) {
+//                    longTime -= 1000
+//                }
                 tvTime.text = longTime.getTimeMString()
-                if (time == 60) {
+                if (time >= 60) {
                     if (isFastClick()) {
+                        cameraKitView.stopVideo()
+                        tvTime.visibility = View.GONE
                         JiJiaFragmentDialog.create().setCancelOutSide(true)
                             .singleBtn()//两个按钮
                             .setMessage("最长可录制60秒视频")
@@ -191,6 +202,7 @@ class JiJiaCameraActivity : AppCompatActivity(), CoroutineScope by MainScope() {
                 }
                 val path = getTempFilePath()
                 cameraKitView.takeVideo(File(path))
+                tvTime.text="00:00"
                 tvTime.visibility = View.VISIBLE
             }
 
