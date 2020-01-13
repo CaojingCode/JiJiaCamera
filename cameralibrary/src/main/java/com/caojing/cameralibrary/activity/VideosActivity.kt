@@ -126,22 +126,27 @@ class VideosActivity : AppCompatActivity(), BaseQuickAdapter.OnItemChildClickLis
                 .setDialogCallBack(object : JiJiaFragmentDialog.DialogCallBack {
                     override fun btnOk() {
                         //删除选中的视频，真实位置，
-                        for (i in videoAdapter.data.size - 1 downTo 0) {
+                        val size = videoAdapter.data.size - 1
+                        for (i in size downTo 0) {
                             if (videoAdapter.data[i].isSelect) {
                                 FileUtils.delete(videoAdapter.data[i].videoPath)
-                                removeTittleTime(i - 1)
+
+                                videoAdapter.remove(i)
+                            } else if(videoAdapter.data[i].viewType == ItemTittleView){
+                                removeTittleTime(i)
                             }
                         }
                         //获取两个集合的差集,更新适配器
-                        @Suppress("UNCHECKED_CAST")
-                        val newList: MutableList<VideoBean> =
-                            CollectionUtils.subtract(
-                                videoAdapter.data,
-                                videoSelectList
-                            ) as MutableList<VideoBean>
-                        videoAdapter.setNewData(newList)
-                        newList.updateTxt()
-                        if (newList.isEmpty()){
+//                        @Suppress("UNCHECKED_CAST")
+//                        val newList: MutableList<VideoBean> =
+//                            CollectionUtils.subtract(
+//                                videoAdapter.data,
+//                                videoSelectList
+//                            ) as MutableList<VideoBean>
+//                        videoAdapter.setNewData(newList)
+                        videoAdapter.data.updateTxt()
+//                        newList.updateTxt()
+                        if (videoAdapter.data.isEmpty()){
                             llBottom.visibility=View.GONE
                         }
                         ToastUtils.showShort("删除成功")
@@ -214,12 +219,21 @@ class VideosActivity : AppCompatActivity(), BaseQuickAdapter.OnItemChildClickLis
     /**
      * 判断是否要删除对应的时间标题
      */
-    fun removeTittleTime(position: Int) {
-        if (position < videoAdapter.data.size && position >= 0) {
-            if (videoAdapter.data[position].viewType == ItemTittleView) {
-                videoAdapter.remove(position)
+    fun removeTittleTime(deletePosition: Int) {
+        if (deletePosition <= videoAdapter.data.size - 1 && deletePosition >= 0){
+            if (videoAdapter.data[deletePosition].viewType == ItemTittleView){
+                if(deletePosition == videoAdapter.data.size - 1){
+                    videoAdapter.remove(deletePosition)
+                } else if(deletePosition < videoAdapter.data.size - 1){
+                    val nextPosition = deletePosition + 1
+                    if(videoAdapter.data[nextPosition].viewType == ItemTittleView){
+                        videoAdapter.remove(deletePosition)
+                    }
+                }
             }
         }
+
+
         if(videoAdapter.data.size<=0){
             llBottom.visibility = View.GONE
         }
