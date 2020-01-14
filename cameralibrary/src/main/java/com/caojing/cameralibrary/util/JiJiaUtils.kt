@@ -198,7 +198,6 @@ fun getTempStringPath(): String {
  * 创建文件路径
  */
 fun Context.getTempFilePath(): String {
-//    this.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS)?.absolutePath
 
 
     val fileDir = String.format(
@@ -227,13 +226,14 @@ fun getVideoInfoList(): MutableList<VideoBean> {
     if (videos == null)
         videos = emptyArray()
     //过滤掉不存在的文件
-//    val videoList = mutableListOf<VideoBean>()
-//    for (i in mutableList.indices) {
-//        if (FileUtils.isFileExists(mutableList[i].videoPath)) {
-//            videoList.add(mutableList[i])
-//        }
-//    }
-    return videos.toMutableList()
+    val videoList = mutableListOf<VideoBean>()
+    for (i in videos.indices) {
+        if (FileUtils.isFileExists(FileUtils.getFileByPath(videos[i].videoPath))) {
+            videoList.add(videos[i])
+        }
+    }
+//    return videos.toMutableList()
+    return videoList
 }
 
 fun getVideoList() {

@@ -67,7 +67,7 @@
         app:layout_constraintBottom_toTopOf="@+id/videoView"
         app:layout_constrainedHeight="true"
         android:gravity="center_vertical"
-        android:layout_marginLeft="36dp"
+        android:paddingLeft="36dp"
         android:orientation="vertical">
 
         <TextView
@@ -100,7 +100,7 @@
         android:layout_width="match_parent"
         android:layout_height="281dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/llTopTittle"/>
 
 
     <LinearLayout
