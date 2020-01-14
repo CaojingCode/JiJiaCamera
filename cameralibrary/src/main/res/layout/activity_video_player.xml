@@ -53,6 +53,7 @@
             app:qmui_backgroundColor="@color/mainColor"
             app:qmui_radius="3dp"
             android:gravity="center"
+            app:qmui_borderWidth="0dp"
             app:layout_constraintTop_toTopOf="@+id/ivBack"
             app:layout_constraintBottom_toBottomOf="@+id/ivBack"
             app:layout_constraintEnd_toEndOf="parent"
