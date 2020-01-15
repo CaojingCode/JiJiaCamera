@@ -60,7 +60,7 @@ class VideosActivity : AppCompatActivity(), BaseQuickAdapter.OnItemChildClickLis
             files = getVideoFiles()
             pbVideos.visibility = View.GONE
 
-            if (selectPath.isNotEmpty()){
+            if (!selectPath.isNullOrEmpty()){
                 for (i in files.indices) {
                     if (files[i].videoPath == selectPath) {
                         files[i].isSelect = true

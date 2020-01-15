@@ -62,4 +62,11 @@ class JiJiaStandardGSYVideoPlayer(context: Context, attrs: AttributeSet?) :
         }
     }
 
+    override fun showVolumeDialog(deltaY: Float, volumePercent: Int) {
+        super.showVolumeDialog(deltaY, volumePercent)
+    }
+
+    override fun dismissVolumeDialog() {
+        super.dismissVolumeDialog()
+    }
 }
