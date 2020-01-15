@@ -60,10 +60,12 @@ class VideosActivity : AppCompatActivity(), BaseQuickAdapter.OnItemChildClickLis
             files = getVideoFiles()
             pbVideos.visibility = View.GONE
 
-            for (i in files.indices) {
-                if (files[i].videoPath == selectPath) {
-                    files[i].isSelect = true
-                    break
+            if (selectPath.isNotEmpty()){
+                for (i in files.indices) {
+                    if (files[i].videoPath == selectPath) {
+                        files[i].isSelect = true
+                        break
+                    }
                 }
             }
 
@@ -91,7 +93,7 @@ class VideosActivity : AppCompatActivity(), BaseQuickAdapter.OnItemChildClickLis
                 }
             }
             if (videoSelectList.size <= 0) {
-                showToast("请最少选中一个")
+                showToast("请选择视频")
                 return@setOnClickListener
             }
             val intent = Intent()
