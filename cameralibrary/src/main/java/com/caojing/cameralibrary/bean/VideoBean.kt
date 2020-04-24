@@ -20,8 +20,9 @@ data class VideoBean(
     var deviceType: String = "",  //设备型号
     var isOnlyPlay: Boolean = false//是否仅播放
 
-):Serializable,Comparable<VideoBean> {
-    override fun compareTo(other: VideoBean): Int {
-       return (other.videoTimestamp-this.videoTimestamp).toInt()
-    }
-}
+):Serializable
+//    ,Comparable<VideoBean> {
+//    override fun compareTo(other: VideoBean): Int {
+//       return (other.videoTimestamp-this.videoTimestamp).toInt()
+//    }
+//}
